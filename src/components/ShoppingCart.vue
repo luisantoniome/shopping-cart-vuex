@@ -18,7 +18,7 @@
   export default {
     computed: {
       ...mapState({
-        checkoutStatus: 'checkoutStatus'
+        checkoutStatus: state => state.cart.checkoutStatus
       }),
 
       ...mapGetters({
