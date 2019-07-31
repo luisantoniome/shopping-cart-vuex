@@ -1,6 +1,8 @@
 import shop from '@/api/shop'
 
 export default {
+  namespaced: true,
+
   state: {
     items: [],
     checkoutStatus: null
@@ -11,7 +13,7 @@ export default {
      * Get the products from the cart
      * @param {*} state - Vuex state
      */
-    cartProducts(state, getters, rootState) {
+    cartProducts(state, getters, rootState, rootGetters) {
       return state.items.map(cartItem => {
         const product = rootState.products.items.find(product => product.id === cartItem.id)
         return {
@@ -40,15 +42,15 @@ export default {
      * @param {*} context.commit - Commit method from the context object
      * @param {*} product - The payload (product)
      */
-    addProductToCart ({ state, getters, commit, rootState }, product) {
-      if (getters.productIsInStock(product)) {
+    addProductToCart ({ state, getters, commit, rootState, rootGetters }, product) {
+      if (rootGetters['products/productIsInStock'](product)) {
         const cartItem = state.items.find(item => item.id === product.id)
         if (!cartItem) {
           commit('pushProductToCart', product.id)
         } else {
           commit('incrementItemQuantity', cartItem)
         }
-        commit('decrementProductInventory', product)
+        commit('products/decrementProductInventory', product, {root: true})
       }
     },
 
